@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Viewer</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    .header {
+      width: 100%;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+    }
+    .info {
+      font-size: 18px;
+      line-height: 28px;
+      text-align: left;
+    }
+    .logo img {
+      width: 150px;
+    }
+    .card {
+      background: #fff;
+      padding: 20px;
+      margin: 20px auto;
+      width: 95%;
+      max-width: 600px;
+      border-radius: 10px;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+    }
+    .btn {
+      display: block;
+      margin: 20px auto;
+      background: #2b2b39;
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-size: 18px;
+      width: fit-content;
+      text-decoration: none;
+    }
+    footer {
+      text-align: center;
+      color: #bbb;
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="info">
+      <div id="clientName"></div>
+      <div>Date of Report: <span id="reportDate"></span></div>
+      <div>Report Number: <span id="reportNumber"></span></div>
+      <div>Expiry Date: <span id="expiry"></span></div>
+      <div>Trusted by *HORIZON LLOYD*</div>
+    </div>
+
+    <div class="logo">
+      <img src="logo.png" alt="Logo">
+    </div>
+  </div>
+
+  <div class="card">
+    <img id="reportImage" src="" alt="Report Image">
+  </div>
+
+  <a id="pdfButton" href="#" target="_blank" class="btn">📄 View PDF</a>
+
+  <footer>
+    horizoneg.com
+  </footer>
+
+  <script>
+    function getQueryParam(key) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(key);
+    }
+
+    const id = getQueryParam("id");
+
+    if (!id) {
+      document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:40px;'>❌ Report ID not found</h2>";
+    } else {
+      fetch(`certs/${id}.json`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("clientName").innerText = data.clientName;
+          document.getElementById("reportDate").innerText = data.reportDate;
+          document.getElementById("reportNumber").innerText = data.reportNumber;
+          document.getElementById("expiry").innerText = data.expiry;
+          document.getElementById("reportImage").src = `certs/${data.image}`;
+          document.getElementById("pdfButton").href = `certs/${data.pdf}`;
+        })
+        .catch(() => {
+          document.body.innerHTML = "<h2 style='color:white;text-align:center;margin-top:40px;'>❌ Certificate not found</h2>";
+        });
+    }
+  </script>
+
+</body>
+</html>
